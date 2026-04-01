@@ -12,7 +12,7 @@ class CartScreen extends ConsumerWidget {
     final cartItems = ref.watch(cartProvider);
     final totalPrice = ref.read(cartProvider.notifier).totalPrice;
 
-    void _checkout() async {
+    void checkout() async {
       if (cartItems.isEmpty) return;
       
       final user = ref.read(authProvider);
@@ -29,11 +29,13 @@ class CartScreen extends ConsumerWidget {
       try {
         await ref.read(apiServiceProvider).placeOrder(user.id, restaurantId, totalPrice, itemsMap);
         ref.read(cartProvider.notifier).clear();
+        if (!context.mounted) return;
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Order placed successfully!')),
         );
       } catch (e) {
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error placing order: $e')),
         );
@@ -75,7 +77,7 @@ class CartScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))],
+                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
                   ),
                   child: Column(
                     children: [
@@ -88,7 +90,7 @@ class CartScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: _checkout,
+                        onPressed: checkout,
                         style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
                         child: const Text('Checkout'),
                       ),

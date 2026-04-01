@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/restaurant.dart';
 import '../models/menu_item.dart';
-import '../services/api_service.dart';
 import 'chat_provider.dart';
 
 final restaurantListProvider = FutureProvider<List<Restaurant>>((ref) async {

@@ -5,13 +5,11 @@ import '../services/api_service.dart';
 final apiServiceProvider = Provider((ref) => ApiService());
 
 final chatProvider = StateNotifierProvider<ChatNotifier, List<ChatMessage>>((ref) {
-  return ChatNotifier(ref.watch(apiServiceProvider));
+  return ChatNotifier();
 });
 
 class ChatNotifier extends StateNotifier<List<ChatMessage>> {
-  final ApiService _apiService;
-
-  ChatNotifier(this._apiService) : super([
+  ChatNotifier() : super([
     ChatMessage(text: "Hello! I'm Msosi. Please choose an option by typing its number:\n\n1. Show menu\n2. Show list of restaurants\n3. My orders", type: MessageType.bot),
   ]);
 

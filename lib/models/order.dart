@@ -1,5 +1,3 @@
-import 'menu_item.dart';
-
 class Order {
   final int id;
   final int userId;

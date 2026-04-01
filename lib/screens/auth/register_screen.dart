@@ -15,6 +15,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _isPasswordVisible = false;
+  String _registerAs = 'User';
 
   void _register() async {
     setState(() => _isLoading = true);
@@ -23,10 +24,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       _emailController.text,
       _passwordController.text,
     );
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
     if (errorMsg == null) {
       Navigator.pop(context);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Registration successful! Please login.')),
       );
@@ -78,13 +81,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: 'User',
+                key: ValueKey(_registerAs),
+                initialValue: _registerAs,
                 decoration: const InputDecoration(labelText: 'Register As', border: OutlineInputBorder()),
                 items: const [
                   DropdownMenuItem(value: 'User', child: Text('Student / User')),
                   DropdownMenuItem(value: 'Business Owner', child: Text('Business Owner / Admin')),
                 ],
                 onChanged: (value) {
+                  if (value == null) return;
+                  setState(() => _registerAs = value);
                   if (value == 'Business Owner') {
                     _emailController.text = 'admin@msosi.com';
                   }

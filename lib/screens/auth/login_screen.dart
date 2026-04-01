@@ -15,6 +15,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _isPasswordVisible = false;
+  String _loginAs = 'User';
 
   void _login() async {
     setState(() => _isLoading = true);
@@ -22,6 +23,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _emailController.text,
       _passwordController.text,
     );
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
     if (errorMsg != null) {
@@ -69,13 +71,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: 'User',
+              key: ValueKey(_loginAs),
+              initialValue: _loginAs,
               decoration: const InputDecoration(labelText: 'Login As', border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'User', child: Text('Student / User')),
                 DropdownMenuItem(value: 'Business Owner', child: Text('Business Owner / Admin')),
               ],
               onChanged: (value) {
+                if (value == null) return;
+                setState(() => _loginAs = value);
                 if (value == 'Business Owner') {
                   _emailController.text = 'admin@msosi.com';
                 } else {

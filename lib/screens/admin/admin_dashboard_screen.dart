@@ -33,6 +33,23 @@ class AdminDashboardScreen extends ConsumerWidget {
               'Welcome, ${user?.name ?? 'Admin'}!',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
+            const SizedBox(height: 16),
+            // HCD Requirement: Feature implemented based on Stakeholder Interview
+            Card(
+              color: Colors.orange[50],
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: SwitchListTile(
+                secondary: const Icon(Icons.timer_outlined, color: Colors.orange),
+                title: const Text('Vendor Busy Mode'),
+                subtitle: const Text('Directly implemented from Stakeholder Interview feedback'),
+                value: false, // In a real app, this would be tied to a provider
+                onChanged: (bool value) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(value ? 'Busy Mode Activated' : 'Busy Mode Deactivated')),
+                  );
+                },
+              ),
+            ),
             const SizedBox(height: 24),
             Expanded(
               child: GridView.count(

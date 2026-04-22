@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "2488750274",
+    "project_id": "msosi-app-f9114",
+    "storage_bucket": "msosi-app-f9114.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2488750274:android:f4ce2554980194a23f6b5b",
+        "android_client_info": {
+          "package_name": "com.university.campus_food.campus_food_chatbot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2488750274-v7bqo6m05oj4isrqo4ud80f0dl68n36v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8ASOkkCzGq6Aw9kFFU0xS4p8M5kSdW-w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2488750274-v7bqo6m05oj4isrqo4ud80f0dl68n36v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

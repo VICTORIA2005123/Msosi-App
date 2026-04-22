@@ -1,22 +1,43 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/main_screen.dart';
+import 'router/app_router.dart';
+import 'widgets/realtime_connection.dart';
 
-void main() {
+import 'firebase_options.dart';
+import 'utils/seed_data.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  try {
+    // Only attempts to seed if the database actually exists and is accessible
+    await seedDatabase();
+  } catch (e) {
+    debugPrint('Seeding failed (likely because Firestore is not created yet): $e');
+  }
+
   runApp(
     const ProviderScope(
-      child: CampusFoodApp(),
+      child: RealtimeConnection(
+        child: CampusFoodApp(),
+      ),
     ),
   );
 }
 
-class CampusFoodApp extends StatelessWidget {
+class CampusFoodApp extends ConsumerWidget {
   const CampusFoodApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(goRouterProvider);
+    return MaterialApp.router(
       title: 'Msosi',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -42,7 +63,7 @@ class CampusFoodApp extends StatelessWidget {
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
       ),
       themeMode: ThemeMode.system,
-      home: const MainScreen(),
+      routerConfig: router,
     );
   }
 }

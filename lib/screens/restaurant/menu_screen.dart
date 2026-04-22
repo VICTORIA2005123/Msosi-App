@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/restaurant.dart';
 import '../../providers/restaurant_provider.dart';
 import '../../providers/cart_provider.dart';
+import '../../widgets/shimmer_placeholders.dart';
 
 class MenuScreen extends ConsumerWidget {
   final Restaurant restaurant;
@@ -22,7 +23,7 @@ class MenuScreen extends ConsumerWidget {
             final item = menu[index];
             return ListTile(
               title: Text(item.itemName),
-              subtitle: Text('\$${item.price.toStringAsFixed(2)}'),
+              subtitle: Text('₹${item.price.toStringAsFixed(2)}'),
               trailing: item.available
                   ? ElevatedButton(
                       onPressed: () {
@@ -37,7 +38,7 @@ class MenuScreen extends ConsumerWidget {
             );
           },
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const MenuListShimmer(),
         error: (err, stack) => Center(child: Text('Error: $err')),
       ),
     );

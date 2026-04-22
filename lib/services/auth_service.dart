@@ -1,85 +1,96 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/user.dart';
 
 class AuthService {
-  static const String baseUrl = 'http://your-campus-api.com/api';
+  final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
   final _storage = const FlutterSecureStorage();
-  final _client = http.Client();
 
   Future<User?> login(String email, String password) async {
-    // Basic validation to demonstrate specific login errors
-    if (!email.contains('@')) {
-      throw Exception('Incorrect email format.');
-    }
-    if (password.length < 6) {
-      throw Exception('Incorrect password. Password must be at least 6 characters.');
-    }
-
     try {
-      final response = await _client.post(
-        Uri.parse('$baseUrl/login'),
-        body: {'email': email, 'password': password},
+      final credential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final user = User.fromJson(data['user']);
-        await _storage.write(key: 'token', value: data['token']);
+      
+      final fUser = credential.user;
+      if (fUser != null) {
+        final token = await fUser.getIdToken();
+        final user = User(
+          id: fUser.uid,
+          name: fUser.displayName ?? email.split('@')[0],
+          email: fUser.email ?? email,
+          token: token,
+          isAdmin: email == 'admin@msosi.com',
+        );
         await _storage.write(key: 'user', value: json.encode(user.toJson()));
         return user;
-      } else if (response.statusCode == 404) {
-        throw Exception('Email not found.');
-      } else if (response.statusCode == 401) {
-        throw Exception('Incorrect password.');
       }
       return null;
-    } catch (e) {
-      // Since the API is not active, mock a successful login for valid credentials
-      final mockUser = User(id: 1, name: email.split('@')[0], email: email, isAdmin: email == 'admin@msosi.com');
-      await _storage.write(key: 'token', value: 'mock_token_123');
-      await _storage.write(key: 'user', value: json.encode(mockUser.toJson()));
-      return mockUser;
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        throw Exception('Email not found.');
+      } else if (e.code == 'wrong-password') {
+        throw Exception('Incorrect password.');
+      } else if (e.code == 'invalid-email') {
+        throw Exception('Incorrect email format.');
+      }
+      throw Exception(e.message ?? 'Authentication failed');
     }
   }
 
   Future<User?> register(String name, String email, String password) async {
-    // Basic validation to demonstrate specific registration errors
-    if (name.trim().isEmpty) {
-      throw Exception('Name cannot be empty.');
-    }
-    if (!email.contains('@')) {
-      throw Exception('Incorrect email format.');
-    }
-    if (password.length < 6) {
-      throw Exception('Password must be at least 6 characters.');
-    }
-
     try {
-      final response = await _client.post(
-        Uri.parse('$baseUrl/register'),
-        body: {'name': name, 'email': email, 'password': password},
+      final credential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
       );
-
-      if (response.statusCode == 201) {
-        final data = json.decode(response.body);
-        return User.fromJson(data['user']);
-      } else if (response.statusCode == 409) {
-        throw Exception('Email already exists.');
+      
+      final fUser = credential.user;
+      if (fUser != null) {
+        await fUser.updateDisplayName(name);
+        final token = await fUser.getIdToken();
+        final user = User(
+          id: fUser.uid,
+          name: name,
+          email: email,
+          token: token,
+          isAdmin: email == 'admin@msosi.com',
+        );
+        await _storage.write(key: 'user', value: json.encode(user.toJson()));
+        return user;
       }
       return null;
-    } catch (e) {
-      // Mock successful registration due to API inactivity
-      return User(id: DateTime.now().millisecondsSinceEpoch, name: name, email: email, isAdmin: email == 'admin@msosi.com');
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        throw Exception('Email already exists.');
+      } else if (e.code == 'weak-password') {
+        throw Exception('Password must be at least 6 characters.');
+      }
+      throw Exception(e.message ?? 'Registration failed');
     }
   }
 
   Future<void> logout() async {
+    await _auth.signOut();
     await _storage.deleteAll();
   }
 
   Future<User?> getCurrentUser() async {
+    final fUser = _auth.currentUser;
+    if (fUser != null) {
+      final token = await fUser.getIdToken();
+      return User(
+        id: fUser.uid,
+        name: fUser.displayName ?? fUser.email?.split('@')[0] ?? 'User',
+        email: fUser.email ?? '',
+        token: token,
+        isAdmin: fUser.email == 'admin@msosi.com',
+      );
+    }
+    
+    // Fallback to storage if not natively logged in via Firebase Auth yet
     final userStr = await _storage.read(key: 'user');
     if (userStr != null) {
       return User.fromJson(json.decode(userStr));
@@ -88,6 +99,10 @@ class AuthService {
   }
 
   Future<String?> getToken() async {
-    return await _storage.read(key: 'token');
+    final fUser = _auth.currentUser;
+    if (fUser != null) {
+      return await fUser.getIdToken();
+    }
+    return null;
   }
 }

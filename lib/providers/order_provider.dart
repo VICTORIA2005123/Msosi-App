@@ -6,5 +6,5 @@ import 'chat_provider.dart';
 final orderHistoryProvider = FutureProvider<List<Order>>((ref) async {
   final user = ref.watch(authProvider);
   if (user == null) return [];
-  return ref.watch(apiServiceProvider).getOrders(user.id);
+  return ref.watch(firestoreServiceProvider).getOrders(user.id);
 });

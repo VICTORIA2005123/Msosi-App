@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../providers/restaurant_provider.dart';
-import '../home/chatbot_screen.dart';
+import '../../widgets/shimmer_placeholders.dart';
 
 class RestaurantListScreen extends ConsumerWidget {
   const RestaurantListScreen({super.key});
@@ -49,10 +52,7 @@ class RestaurantListScreen extends ConsumerWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 elevation: 4,
                 child: InkWell(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ChatbotScreen(restaurant: r)),
-                  ),
+                  onTap: () => context.go('/chat', extra: r),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -61,10 +61,18 @@ class RestaurantListScreen extends ConsumerWidget {
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
-                            Image.network(
-                              r.imageUrl,
+                            CachedNetworkImage(
+                              imageUrl: r.imageUrl,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Container(
+                              placeholder: (context, url) {
+                                final dark = Theme.of(context).brightness == Brightness.dark;
+                                return Shimmer.fromColors(
+                                  baseColor: dark ? Colors.grey[800]! : Colors.grey[300]!,
+                                  highlightColor: dark ? Colors.grey[700]! : Colors.grey[100]!,
+                                  child: Container(color: Colors.white),
+                                );
+                              },
+                              errorWidget: (context, url, error) => Container(
                                 color: Colors.grey[300],
                                 child: const Icon(Icons.restaurant, size: 50, color: Colors.grey),
                               ),
@@ -120,7 +128,7 @@ class RestaurantListScreen extends ConsumerWidget {
               );
             },
           ),
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const RestaurantGridShimmer(),
           error: (err, stack) => Center(child: Text('Error: $err')),
         ),
       ),

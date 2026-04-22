@@ -11,7 +11,7 @@ class AdminDashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin Dashboard'),
+        title: const Text('Vendor dashboard'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -43,7 +43,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                   _buildStatCard(context, 'Total Users', '142', Icons.people, Colors.blue),
                   _buildStatCard(context, 'Total Orders', '85', Icons.receipt, Colors.green),
                   _buildStatCard(context, 'Active Menu Items', '34', Icons.restaurant_menu, Colors.orange),
-                  _buildStatCard(context, 'Revenue Today', '\$450.00', Icons.attach_money, Colors.purple),
+                  _buildStatCard(context, 'Revenue Today', '₹450.00', Icons.currency_rupee, Colors.purple),
                 ],
               ),
             ),

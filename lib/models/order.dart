@@ -1,7 +1,7 @@
 class Order {
-  final int id;
-  final int userId;
-  final int restaurantId;
+  final String id;
+  final String userId;
+  final String restaurantId;
   final double totalPrice;
   final String status;
   final DateTime createdAt;
@@ -22,9 +22,9 @@ class Order {
     List<OrderItem> itemsList = list.map((i) => OrderItem.fromJson(i)).toList();
 
     return Order(
-      id: int.parse(json['id'].toString()),
-      userId: int.parse(json['user_id'].toString()),
-      restaurantId: int.parse(json['restaurant_id'].toString()),
+      id: json['id'].toString(),
+      userId: json['user_id'].toString(),
+      restaurantId: json['restaurant_id'].toString(),
       totalPrice: double.parse(json['total_price'].toString()),
       status: json['status'],
       createdAt: DateTime.parse(json['created_at']),
@@ -34,9 +34,9 @@ class Order {
 }
 
 class OrderItem {
-  final int id;
-  final int orderId;
-  final int menuId;
+  final String id;
+  final String orderId;
+  final String menuId;
   final int quantity;
   final double price;
   final String? itemName; // Optional for UI display
@@ -52,9 +52,9 @@ class OrderItem {
 
   factory OrderItem.fromJson(Map<String, dynamic> json) {
     return OrderItem(
-      id: int.parse(json['id'].toString()),
-      orderId: int.parse(json['order_id'].toString()),
-      menuId: int.parse(json['menu_id'].toString()),
+      id: json['id'].toString(),
+      orderId: json['order_id'].toString(),
+      menuId: json['menu_id'].toString(),
       quantity: int.parse(json['quantity'].toString()),
       price: double.parse(json['price'].toString()),
       itemName: json['item_name'],

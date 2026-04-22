@@ -4,11 +4,11 @@ import '../models/menu_item.dart';
 import 'chat_provider.dart';
 
 final restaurantListProvider = FutureProvider<List<Restaurant>>((ref) async {
-  return ref.watch(apiServiceProvider).getRestaurants();
+  return ref.watch(firestoreServiceProvider).getRestaurants();
 });
 
-final menuProvider = FutureProvider.family<List<MenuItem>, int>((ref, restaurantId) async {
-  return ref.watch(apiServiceProvider).getMenu(restaurantId);
+final menuProvider = FutureProvider.family<List<MenuItem>, String>((ref, restaurantId) async {
+  return ref.watch(firestoreServiceProvider).getMenu(restaurantId);
 });
 
 final restaurantSearchProvider = StateProvider<String>((ref) => "");

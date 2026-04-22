@@ -1,6 +1,6 @@
 class MenuItem {
-  final int id;
-  final int restaurantId;
+  final String id;
+  final String restaurantId;
   final String itemName;
   final double price;
   final bool available;
@@ -15,8 +15,8 @@ class MenuItem {
 
   factory MenuItem.fromJson(Map<String, dynamic> json) {
     return MenuItem(
-      id: int.parse(json['id'].toString()),
-      restaurantId: int.parse(json['restaurant_id'].toString()),
+      id: json['id'].toString(),
+      restaurantId: json['restaurant_id'].toString(),
       itemName: json['item_name'],
       price: double.parse(json['price'].toString()),
       available: json['available'] == 1 || json['available'] == true || json['available'] == '1',

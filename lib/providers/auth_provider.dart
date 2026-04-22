@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import '../models/user.dart';
 import '../services/auth_service.dart';
 
@@ -17,6 +18,15 @@ class AuthNotifier extends StateNotifier<User?> {
 
   void _init() async {
     state = await _authService.getCurrentUser();
+    
+    // Listen to Firebase Auth state changes
+    firebase_auth.FirebaseAuth.instance.authStateChanges().listen((fUser) async {
+      if (fUser == null) {
+        state = null;
+      } else {
+        state = await _authService.getCurrentUser();
+      }
+    });
   }
 
   Future<String?> login(String email, String password) async {

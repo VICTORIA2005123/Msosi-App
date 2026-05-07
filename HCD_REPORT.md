@@ -1,14 +1,14 @@
 # Human-Centered Design (HCD) Report
 
 ## 1. Stakeholder Interview
-**Stakeholder**: Local Restaurant Owner / Delivery Driver
+**Stakeholder**: Local Restaurant Owner
 **Interview Date**: [Date]
 
 ### Key Insights
 - **Pain Point**: "I hate when orders come in during a rush when we are understaffed."
-- **Requirement**: A way to temporarily pause or slow down incoming orders without shutting down the entire app.
+- **Requirement**: A way to get incoming orders earlier without so.
 
-### 💡 Follow-up Action
+### Follow-up Action
 **Feature Implemented**: **"Vendor Busy Mode"**
 - **Description**: A toggle in the Vendor Dashboard that marks the restaurant as "Busy".
 - **Impact**: Notifies users of potential delays and gives the restaurant owner control over the order flow.
@@ -27,16 +27,16 @@
 ---
 
 ## 3. Usability Testing Report
-**Participant**: [Name/Initials], Student
-**Task**: "Order a gluten-free pizza and add a note for the driver."
+**Participant**: Macrine, Student
+**Task**: "Order a meal using the chatbot."
 
 ### Observations
-- **Struggle**: The participant couldn't find the "Special Instructions" field initially.
-- **Fix**: Increased the visibility of the "Add Note" button and placed it closer to the "Confirm Order" button.
-- **Result**: In the second round of testing, the participant completed the task 40% faster.
+- **Struggle**: The participant could only type the given number without going back.
+- **Fix**: Added a go back option to either change the order or restart the chat.
+- **Result**: In the second round of testing, the participant was able to go back within the chat.
 
 ---
 
 ## 4. Technical Integration
-- **GitHub Workflow**: Automated pushes configured in VS Code.
+- **GitHub Workflow**: Frequent Pushes to github from VS Code.
 - **Commit History**: Demonstrates daily progress and iterative improvements based on user feedback.

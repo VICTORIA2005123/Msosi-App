@@ -35,6 +35,11 @@ class StudentShell extends StatelessWidget {
             selectedIcon: Icon(Icons.history),
             label: 'Orders',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: 'Profile',
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

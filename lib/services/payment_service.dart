@@ -9,7 +9,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../config/app_config.dart';
 import '../models/payment_models.dart';
-import '../models/user.dart';
+import '../models/app_user.dart';
 import '../providers/auth_provider.dart';
 
 enum PaymentGateway { razorpay, stripe }
@@ -54,7 +54,7 @@ class PaymentService {
 
   Future<PaymentFlowResult> checkout({
     required PaymentGateway gateway,
-    required User user,
+    required AppUser user,
     required String restaurantId,
     required double totalAmount,
     required List<Map<String, dynamic>> items,
@@ -97,7 +97,7 @@ class PaymentService {
 
   Future<CreatePaymentOrderResponse> _createBackendOrder({
     required PaymentGateway gateway,
-    required User user,
+    required AppUser user,
     required String restaurantId,
     required double totalAmount,
     required List<Map<String, dynamic>> items,
@@ -161,7 +161,7 @@ class PaymentService {
 
   Future<PaymentSuccessResponse> _runRazorpayCheckout({
     required CreatePaymentOrderResponse createResponse,
-    required User user,
+    required AppUser user,
     required double totalAmount,
   }) async {
     final orderId = createResponse.razorpayOrderId ?? '';

@@ -3,9 +3,9 @@
     "short_name": "Msosi",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FF5722",
+    "theme_color": "#FF5722",
+    "description": "Campus food, no queues.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

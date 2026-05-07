@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users: read own, write basic profile but NOT role
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId
+                    && !request.resource.data.diff(resource.data).affectedKeys().contains('role');
+    }
+
+    // Restaurants: anyone authenticated can read; vendor owner can write
+    match /restaurants/{restId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if request.auth != null
+                                    && (resource == null || resource.data.vendor_id == request.auth.uid)
+                                    && (request.resource.data.vendor_id == request.auth.uid);
+
+      // Menu items: anyone authenticated can read; restaurant owner can write
+      match /menuItems/{itemId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null
+                     && get(/databases/$(database)/documents/restaurants/$(restId)).data.vendor_id == request.auth.uid;
+      }
+    }
+
+    // Orders:
+    // 1. Creation ONLY via Cloud Functions (client create disabled)
+    // 2. Read: owner or restaurant vendor
+    // 3. Update: ONLY the vendor can change the status
+    match /orders/{orderId} {
+      allow read: if request.auth != null
+                  && (resource.data.user_id == request.auth.uid
+                      || resource.data.vendor_id == request.auth.uid);
+      
+      allow create: if false; // Force usage of /orders/create Cloud Function
+      
+      allow update: if request.auth != null
+                    && resource.data.vendor_id == request.auth.uid
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+    }
+  }
+}

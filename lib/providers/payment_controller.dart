@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/user.dart';
+import '../models/app_user.dart';
 import '../services/payment_service.dart';
 
 class PaymentCheckoutState {
@@ -36,7 +36,7 @@ class PaymentCheckoutController extends StateNotifier<PaymentCheckoutState> {
 
   Future<PaymentFlowResult> checkout({
     required PaymentGateway gateway,
-    required User user,
+    required AppUser user,
     required String restaurantId,
     required double totalAmount,
     required List<Map<String, dynamic>> items,

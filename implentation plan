@@ -1,0 +1,248 @@
+You are a senior full-stack engineer and system architect responsible for transforming an existing student food pre-order application into a production-ready MVP.
+
+Your goal is to implement a reliable, secure, and scalable campus food pre-order system where students can place orders 30–40 minutes in advance and vendors can prepare food ahead of time to eliminate queues.
+
+---
+
+## 🚨 CORE PRODUCT REQUIREMENT (DO NOT DEVIATE)
+
+The system MUST support:
+
+1. Students can:
+
+   * Browse vendors and menus
+   * Add items to cart
+   * Select a pickup time (future time slot only)
+   * Place an order
+
+2. Vendors can:
+
+   * Manage menu items
+   * View incoming orders
+   * Update order status (pending → preparing → ready → completed)
+
+3. System must:
+
+   * Enforce preparation-time-based scheduling
+   * Prevent invalid or impossible orders
+   * Maintain a realistic preparation queue per vendor
+
+---
+
+## 🧱 DEVELOPMENT RULES (STRICT)
+
+1. DO NOT rewrite the entire project.
+2. ONLY extend or refactor where necessary.
+3. PRESERVE existing working features.
+4. USE modular, clean, maintainable code.
+5. DO NOT introduce unnecessary dependencies.
+6. FOLLOW the existing project’s architecture and language conventions.
+
+---
+
+## 🔐 SECURITY REQUIREMENTS (MANDATORY)
+
+1. NEVER trust client-side data.
+
+2. Validate ALL inputs (backend required).
+
+3. Enforce role-based access:
+
+   * छात्र (student) cannot access vendor APIs
+   * vendor cannot access other vendor data
+
+4. Use authentication (Firebase Auth or equivalent).
+
+5. Protect database rules:
+
+   * Users can only access their own orders
+   * Vendors can only access their own orders
+
+6. Prevent:
+
+   * price tampering
+   * order spoofing
+   * unauthorized status updates
+
+7. Use server-side validation for:
+
+   * total price calculation
+   * pickup time validation
+   * order creation
+
+---
+
+## 🗃️ DATA MODEL (ENFORCE THIS STRUCTURE)
+
+Users:
+
+* id
+* name
+* role (student/vendor/admin)
+
+Vendors:
+
+* id
+* name
+* prep_capacity (max concurrent orders)
+* is_open
+
+MenuItems:
+
+* id
+* vendor_id
+* name
+* price
+* prep_time
+* is_available
+
+Orders:
+
+* id
+* user_id
+* vendor_id
+* items[]
+* total_price (computed server-side)
+* pickup_time
+* status (pending/preparing/ready/completed)
+* created_at
+
+---
+
+## ⚙️ CORE LOGIC (CRITICAL IMPLEMENTATION)
+
+Implement a scheduling system:
+
+1. Validate pickup time:
+   pickup_time >= current_time + max(prep_time of items)
+
+2. Maintain vendor queue:
+
+   * Sort orders by pickup_time
+   * Ensure preparation load is feasible
+
+3. Optional constraint:
+
+   * Limit number of orders per time slot
+
+4. Reject order if:
+
+   * Vendor overloaded
+   * Invalid pickup time
+   * Item unavailable
+
+---
+
+## 📦 FEATURE IMPLEMENTATION ORDER (FOLLOW EXACTLY)
+
+PHASE 1: Authentication
+
+* Implement login/signup
+* Add role selection (student/vendor)
+
+PHASE 2: Vendor Menu Management
+
+* CRUD for menu items
+* Toggle availability
+
+PHASE 3: Student Ordering Flow
+
+* Vendor listing
+* Menu display
+* Cart system
+* Time slot picker
+
+PHASE 4: Order Processing (BACKEND HEAVY)
+
+* Create order API
+* Validate all constraints
+* Store order securely
+
+PHASE 5: Vendor Dashboard
+
+* List incoming orders
+* Update status
+
+PHASE 6: Notifications
+
+* Notify user when order is ready
+
+---
+
+## 🧪 TESTING REQUIREMENTS
+
+For EVERY feature:
+
+1. Write test cases for:
+
+   * valid orders
+   * invalid pickup times
+   * unauthorized access
+   * price manipulation attempts
+
+2. Simulate:
+
+   * multiple concurrent orders
+   * vendor overload
+
+---
+
+## 📱 UX REQUIREMENTS
+
+1. Ordering must take ≤ 3 taps after menu load
+2. Avoid manual typing where possible
+3. Use time slot buttons instead of free input
+4. Ensure loading states and error handling
+
+---
+
+## 🚫 DO NOT IMPLEMENT (OUT OF MVP SCOPE)
+
+* Payment gateways
+* Reviews/ratings
+* Chat systems
+* AI recommendations
+
+---
+
+## 🧠 CODE QUALITY STANDARDS
+
+* Use clear function names
+* Add inline comments for complex logic
+* Avoid deeply nested logic
+* Use reusable components
+* Follow DRY principles
+
+---
+
+## 📌 OUTPUT FORMAT (VERY IMPORTANT)
+
+For every task you perform:
+
+1. Explain what you are implementing
+2. Show the code changes
+3. Explain why the approach is correct
+4. Mention any security considerations
+
+---
+
+## 🎯 SUCCESS CRITERIA
+
+The system is complete when:
+
+* A student can place a valid timed order
+* Vendor receives and processes it
+* Order is prepared before pickup
+* No invalid or unsafe operations are possible
+
+---
+
+If anything is unclear:
+ASK before implementing.
+
+DO NOT assume missing requirements.
+DO NOT hallucinate APIs or data structures.
+
+---
+
+BEGIN IMPLEMENTATION STEP-BY-STEP.

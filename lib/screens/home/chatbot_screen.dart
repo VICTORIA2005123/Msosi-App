@@ -27,17 +27,26 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
   }
 
   void _sendMessage() {
-    if (_controller.text.trim().isEmpty) return;
-    ref.read(chatProvider.notifier).sendMessage(_controller.text);
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+    
+    if (text.toLowerCase() == 'q' || text.toLowerCase() == 'quit') {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    ref.read(chatProvider.notifier).sendMessage(text);
     _controller.clear();
     
     // Scroll to bottom
     Future.delayed(const Duration(milliseconds: 100), () {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 

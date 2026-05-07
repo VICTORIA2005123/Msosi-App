@@ -5,6 +5,7 @@ class Order {
   final double totalPrice;
   final String status;
   final DateTime createdAt;
+  final DateTime? pickupTime;
   final List<OrderItem> items;
 
   Order({
@@ -14,12 +15,13 @@ class Order {
     required this.totalPrice,
     required this.status,
     required this.createdAt,
+    this.pickupTime,
     this.items = const [],
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
     var list = json['items'] as List? ?? [];
-    List<OrderItem> itemsList = list.map((i) => OrderItem.fromJson(i)).toList();
+    List<OrderItem> itemsList = list.map((i) => OrderItem.fromJson(i as Map<String, dynamic>)).toList();
 
     return Order(
       id: json['id'].toString(),
@@ -27,9 +29,36 @@ class Order {
       restaurantId: json['restaurant_id'].toString(),
       totalPrice: double.parse(json['total_price'].toString()),
       status: json['status'],
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: _parseDateTime(json['created_at']),
+      pickupTime: json['pickup_time'] != null ? _parseDateTime(json['pickup_time']) : null,
       items: itemsList,
     );
+  }
+
+  static DateTime _parseDateTime(dynamic value) {
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.parse(value);
+    // Handle Firestore Timestamp
+    if (value != null && value.runtimeType.toString().contains('Timestamp')) {
+      return (value as dynamic).toDate();
+    }
+    return DateTime.now();
+  }
+
+  /// Human-readable status label.
+  String get statusLabel {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'Pending';
+      case 'preparing':
+        return 'Preparing';
+      case 'ready':
+        return 'Ready for Pickup';
+      case 'completed':
+        return 'Completed';
+      default:
+        return status;
+    }
   }
 }
 
@@ -52,11 +81,11 @@ class OrderItem {
 
   factory OrderItem.fromJson(Map<String, dynamic> json) {
     return OrderItem(
-      id: json['id'].toString(),
-      orderId: json['order_id'].toString(),
-      menuId: json['menu_id'].toString(),
-      quantity: int.parse(json['quantity'].toString()),
-      price: double.parse(json['price'].toString()),
+      id: json['id']?.toString() ?? '',
+      orderId: json['order_id']?.toString() ?? '',
+      menuId: json['menu_id']?.toString() ?? '',
+      quantity: int.tryParse(json['quantity']?.toString() ?? '1') ?? 1,
+      price: double.tryParse(json['price']?.toString() ?? '0') ?? 0.0,
       itemName: json['item_name'],
     );
   }

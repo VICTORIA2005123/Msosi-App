@@ -1,55 +1,33 @@
-<<<<<<< HEAD
-# campus_food_chatbot
+# Msosi App - Campus Food Chatbot Ordering System
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-
-*Msosi App - Campus Food Chatbot Ordering System*
-
- *Description*
 Msosi App is a chatbot-based food ordering system designed for campus students to quickly browse menus and place orders through a simple chat interface.
 
-*Problem Statement*
+## 🎯 Problem Statement
 Students often face long queues and delays while ordering food on campus.
 
- *Objective*
+## 🚀 Objective
 To provide a fast, user-friendly chatbot system for ordering food efficiently.
 
-*Planned Features*
-- Chat-based interaction
-- Menu display
-- Food ordering system
-- Order confirmation
+## ✨ Features
+- **Chat-based interaction**: Intuitive chatbot for browsing and ordering.
+- **Real-time Menu**: Live menu updates via Firebase.
+- **Order Management**: Track your orders from pending to completed.
+- **Vendor Dashboard**: Dedicated interface for restaurant owners.
+- **Busy Mode**: (HCD Requirement) Vendors can toggle "Busy" status during rush hours.
 
+## 🛠 Tech Stack
+- **Frontend**: Flutter (Dart)
+- **Backend**: Firebase (Firestore, Auth, Functions)
+- **State Management**: Riverpod
+- **Payments**: Razorpay / Stripe integration
+
+## 📂 HCD Documentation (Semester 6 Requirements)
+- **High-Fidelity Prototype**: [Link to Figma/Adobe XD Prototype](YOUR_LINK_HERE)
+- **Stakeholder Interview**: Documented in [HCD_REPORT.md](./HCD_REPORT.md)
+- **Usability Testing**: Documented in [HCD_REPORT.md](./HCD_REPORT.md)
+
+---
 *"Msosi" means food in Swahili, representing quick and easy access to meals.*
 
-*Tech Stack*
-- Frontend: HTML, CSS, JavaScript
-- Backend: Python (Flask)
-- Data: JSON
+**Author**: Victoria Vedastus
 
-*Development Plan*
-
-Day 1 - UI + basic chatbot 
-Day 2 - Menu system 
-Day 3 - Order system 
-Day 4 - Integration 
-Day 5 - Final prototype 
-
-
-*Author*
-Victoria Vedastus
->>>>>>> 77c0f2e481c5ff01b841b0229c5a05ba029735e0

@@ -6,7 +6,9 @@ import 'router/app_router.dart';
 import 'widgets/realtime_connection.dart';
 
 import 'firebase_options.dart';
+import 'services/notification_service.dart';
 import 'utils/seed_data.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,12 +17,12 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  try {
-    // Only attempts to seed if the database actually exists and is accessible
-    await seedDatabase();
-  } catch (e) {
-    debugPrint('Seeding failed (likely because Firestore is not created yet): $e');
-  }
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  // Seed database in the background without blocking the UI
+  seedDatabase().catchError((e) {
+    debugPrint('Seeding failed: $e');
+  });
 
   runApp(
     const ProviderScope(
@@ -43,24 +45,46 @@ class CampusFoodApp extends ConsumerWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepOrange,
-          primary: Colors.deepOrange,
+          seedColor: const Color(0xFFFF5722), // Vibrant Deep Orange
+          primary: const Color(0xFFFF5722),
+          secondary: const Color(0xFF212121), // Charcoal
+          surface: const Color(0xFFFDFBF7), // Warm Cream
+          onSurface: const Color(0xFF1A1A1A),
         ),
-        textTheme: GoogleFonts.interTextTheme(),
+        textTheme: GoogleFonts.outfitTextTheme(),
         appBarTheme: const AppBarTheme(
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           elevation: 0,
+          scrolledUnderElevation: 0,
+        ),
+        cardTheme: CardThemeData(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: Colors.black.withOpacity(0.05)),
+          ),
+          color: Colors.white,
         ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepOrange,
+          seedColor: const Color(0xFFFF5722),
           brightness: Brightness.dark,
+          surface: const Color(0xFF050505), // OLED Black
+          onSurface: const Color(0xFFF5F5F5),
         ),
-        textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+        textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
+        cardTheme: CardThemeData(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: Colors.white.withOpacity(0.1)),
+          ),
+          color: const Color(0xFF121212),
+        ),
       ),
       themeMode: ThemeMode.system,
       routerConfig: router,

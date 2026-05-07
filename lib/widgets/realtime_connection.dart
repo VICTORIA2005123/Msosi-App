@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/user.dart';
+import '../models/app_user.dart';
 import '../providers/auth_provider.dart';
 import '../services/realtime_service.dart';
 
@@ -13,7 +13,7 @@ class RealtimeConnection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<User?>(authProvider, (previous, next) async {
+    ref.listen<AppUser?>(authProvider, (previous, next) async {
       final rt = ref.read(realtimeServiceProvider);
       if (next == null) {
         await rt.disconnect();

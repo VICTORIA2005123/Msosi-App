@@ -8,7 +8,7 @@ class AppConfig {
   /// REST API base URL (no trailing slash).
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://your-campus-api.com/api',
+    defaultValue: 'https://asia-south1-msosi-app-f9114.cloudfunctions.net/api',
   );
 
   /// WebSocket URL for real-time order and menu updates. Leave empty to disable.

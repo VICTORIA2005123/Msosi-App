@@ -6,10 +6,6 @@ import '../services/firestore_service.dart';
 import 'auth_provider.dart';
 import 'cart_provider.dart';
 
-final firestoreServiceProvider = Provider((ref) {
-  return FirestoreService();
-});
-
 final chatProvider = StateNotifierProvider<ChatNotifier, List<ChatMessage>>((ref) {
   return ChatNotifier(ref);
 });
@@ -25,7 +21,7 @@ class ChatNotifier extends StateNotifier<List<ChatMessage>> {
 
   ChatNotifier(this.ref) : super([
     ChatMessage(
-      text: "Hello! I'm Msosi. 👩🏾‍🍳\nPlease choose an option by typing its number:\n\n1. Show list of restaurants\n2. My orders\n3. Checkout cart\n4. Show cart",
+      text: "Hello! I'm Msosi. 👩🏾‍🍳\nPlease choose an option by typing its number:\n\n1. Show list of restaurants\n2. My orders\n3. Checkout cart\n4. Show cart\n\n(Type 'q' to exit)",
       type: MessageType.bot,
     ),
   ]);
@@ -71,6 +67,17 @@ class ChatNotifier extends StateNotifier<List<ChatMessage>> {
       }
     }
 
+    // Navigation: Go Back
+    if (cmd == '0') {
+      if (_currentMenu != null) {
+        await _fetchRestaurants();
+        return;
+      } else {
+        _resetBot();
+        return;
+      }
+    }
+
     // Base commands
     if (cmd == '1' || cmd.contains('restaurant') || cmd.contains('list')) {
       await _fetchRestaurants();
@@ -82,9 +89,18 @@ class ChatNotifier extends StateNotifier<List<ChatMessage>> {
       _showCartSummary();
     } else {
       _addBotResponse(
-        "I didn't quite catch that.\nTry:\n1 for restaurants\n2 for my orders\n3 to checkout cart\n4 to show cart",
+        "I didn't quite catch that.\nTry:\n1 for restaurants\n2 for my orders\n3 to checkout cart\n4 to show cart\n0 to start over\n'q' to quit",
       );
     }
+  }
+
+  void _resetBot() {
+    _currentRestaurants = null;
+    _currentMenu = null;
+    _selectedRestaurant = null;
+    _addBotResponse(
+      "Bot reset! 👩🏾‍🍳\nWhat would you like to do?\n1. Show list of restaurants\n2. My orders\n3. Checkout cart\n4. Show cart",
+    );
   }
 
   Future<void> _fetchRestaurants() async {
@@ -121,6 +137,7 @@ class ChatNotifier extends StateNotifier<List<ChatMessage>> {
       for (int i = 0; i < menu.length; i++) {
         res += "${i + 1}. ${menu[i].itemName} - ₹${menu[i].price.toStringAsFixed(2)}\n";
       }
+      res += "\n**0. Go back to restaurants**";
       _addBotResponse(res);
     } catch (e) {
       _addBotResponse("Error loading menu for ${r.name}.");
@@ -205,20 +222,31 @@ class ChatNotifier extends StateNotifier<List<ChatMessage>> {
       (sum, item) => sum + (item.item.price * item.quantity),
     );
 
+    // Calculate earliest possible pickup time
+    final maxPrepTime = cartItems.map((ci) => ci.item.prepTime).reduce((a, b) => a > b ? a : b);
+    final now = DateTime.now();
+    final earliest = now.add(Duration(minutes: maxPrepTime));
+    final roundedMinute = ((earliest.minute / 10).ceil()) * 10;
+    var pickupTime = DateTime(earliest.year, earliest.month, earliest.day, earliest.hour, roundedMinute);
+    if (pickupTime.isBefore(earliest)) {
+      pickupTime = pickupTime.add(const Duration(minutes: 10));
+    }
+
     try {
       final result = await ref.read(firestoreServiceProvider).placeOrder(
             user.id,
             restaurantId,
             total,
             itemsMap,
+            pickupTime: pickupTime,
           );
       ref.read(cartProvider.notifier).clear();
       final orderId = (result['orderId'] ?? '').toString();
       _addBotResponse(
-        "Order placed successfully! 🎉\nOrder ID: $orderId\nType 2 any time to view your latest orders.",
+        "Order placed successfully! 🎉\nOrder ID: $orderId\n\n**Type 1 to start a new order** or 2 to view history.",
       );
     } catch (e) {
-      _addBotResponse("Checkout failed. Please try again or use the cart checkout button.");
+      _addBotResponse("Checkout failed. Please try again or use the cart checkout button.\n\nType 0 to reset the bot.");
     }
   }
 
